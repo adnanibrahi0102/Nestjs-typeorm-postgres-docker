@@ -14,7 +14,10 @@ lerna-debug.log*
 
 # OS
 .DS_Store
-
+# Ignore Docker-related volumes and configs
+**/data/
+**/db/
+**/logs/
 # Tests
 /coverage
 /.nyc_output
