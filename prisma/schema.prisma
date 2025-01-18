@@ -13,10 +13,11 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-enum userRole{
+enum userRole {
   ADMIN
   VENDOR
 }
+
 model User {
   id           String     @id @unique
   email        String     @unique
@@ -27,6 +28,33 @@ model User {
   vendorId     String     @unique
   createdAt    DateTime   @default(now())
   updatedAt    DateTime   @updatedAt
+  plan         Plan?      @relation(fields: [planId], references: [id])
+  planId       String?    // Foreign key to Plan model
+}
 
+model Plan {
+  id           String     @id @unique @default(uuid())
+  name         String     @unique
+  features     String     // JSON or text field for plan features
+  price        Decimal
+  createdAt    DateTime   @default(now())
+  users        User[]     // Relation back to User
+  services     PlanService[] @relation("PlanToPlanService") // Opposite relation field
+}
 
+model Service {
+  id           String     @id @unique @default(uuid())
+  name         String
+  description  String
+  plans        PlanService[] @relation("ServiceToPlanService") // Opposite relation field
+  createdAt    DateTime   @default(now())
+}
+
+model PlanService {
+  id           String     @id @unique @default(uuid())
+  plan         Plan       @relation(fields: [planId], references: [id], name: "PlanToPlanService")
+  planId       String     // Foreign key to Plan
+  service      Service    @relation(fields: [serviceId], references: [id], name: "ServiceToPlanService")
+  serviceId    String     // Foreign key to Service
+  createdAt    DateTime   @default(now())
 }

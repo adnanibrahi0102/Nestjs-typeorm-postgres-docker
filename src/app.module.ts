@@ -12,6 +12,8 @@ import { userRole } from '@prisma/client';
 import { APP_GUARD } from '@nestjs/core';
 import { RolesGuard } from './auth/guards/jwt-auth.guard';
 import { MailerModule } from '@nestjs-modules/mailer';
+import { PlanModule } from './plan/plan.module';
+import { ServiceModule } from './service/service.module';
 
 // Register the Enum here
 registerEnumType(userRole, {
@@ -41,6 +43,8 @@ registerEnumType(userRole, {
         },
       },
     }),
+    PlanModule,
+    ServiceModule,
   ],
   controllers: [AppController],
   providers: [
