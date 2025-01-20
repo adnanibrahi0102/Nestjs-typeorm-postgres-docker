@@ -1,34 +1,39 @@
 import { Resolver, Query, Mutation, Args, Int } from '@nestjs/graphql';
 import { PlanService } from './plan.service';
-import { Plan } from './entities/plan.entity';
+
 import { CreatePlanInput } from './dto/create-plan.input';
 import { UpdatePlanInput } from './dto/update-plan.input';
+import {
+  CreatePlanResponse,
+  PlanFindAllResponse,
+  PlanFindOneResponse,
+} from './entities/plan.entity';
 
-@Resolver(() => Plan)
+@Resolver()
 export class PlanResolver {
   constructor(private readonly planService: PlanService) {}
 
-  @Mutation(() => Plan)
+  @Mutation(() => CreatePlanResponse)
   createPlan(@Args('createPlanInput') createPlanInput: CreatePlanInput) {
-    return this.planService.create(createPlanInput);
+    return this.planService.createPlan(createPlanInput);
   }
 
-  @Query(() => [Plan], { name: 'plan' })
-  findAll() {
-    return this.planService.findAll();
+  @Query(() => PlanFindAllResponse)
+  findAllPlans() {
+    return this.planService.findAllPlans();
   }
 
-  @Query(() => Plan, { name: 'plan' })
-  findOne(@Args('id', { type: () => Int }) id: number) {
-    return this.planService.findOne(id);
+  @Query(() => PlanFindOneResponse)
+  findOnePlan(@Args('id') id: string) {
+    return this.planService.findOnePlan(id);
   }
 
-  @Mutation(() => Plan)
+  @Mutation(() => CreatePlanResponse)
   updatePlan(@Args('updatePlanInput') updatePlanInput: UpdatePlanInput) {
     return this.planService.update(updatePlanInput.id, updatePlanInput);
   }
 
-  @Mutation(() => Plan)
+  @Mutation(() => CreatePlanResponse)
   removePlan(@Args('id', { type: () => Int }) id: number) {
     return this.planService.remove(id);
   }
