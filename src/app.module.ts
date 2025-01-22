@@ -58,6 +58,6 @@ registerEnumType(userRole, {
 })
 export class AppModule {
   constructor() {
-    console.log('connect');
+    console.log('connected to Postgress');
   }
 }

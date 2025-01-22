@@ -1,35 +1,36 @@
 import { Resolver, Query, Mutation, Args, Int } from '@nestjs/graphql';
 import { ServiceService } from './service.service';
-import { Service } from './entities/service.entity';
+import { ServiceEntity, ServiceResponse } from './entities/service.entity';
 import { CreateServiceInput } from './dto/create-service.input';
 import { UpdateServiceInput } from './dto/update-service.input';
+import { CreatePlanResponse } from 'src/plan/entities/plan.entity';
 
-@Resolver(() => Service)
+@Resolver()
 export class ServiceResolver {
   constructor(private readonly serviceService: ServiceService) {}
 
-  @Mutation(() => Service)
+  @Mutation(() => CreatePlanResponse)
   createService(@Args('createServiceInput') createServiceInput: CreateServiceInput) {
     return this.serviceService.create(createServiceInput);
   }
 
-  @Query(() => [Service], { name: 'service' })
-  findAll() {
-    return this.serviceService.findAll();
+  @Query(() => ServiceResponse)
+  findAllServices() {
+    return this.serviceService.findAllServices();
   }
 
-  @Query(() => Service, { name: 'service' })
-  findOne(@Args('id', { type: () => Int }) id: number) {
-    return this.serviceService.findOne(id);
-  }
+  // @Query(() => Service, { name: 'service' })
+  // findOne(@Args('id', { type: () => Int }) id: number) {
+  //   return this.serviceService.findOne(id);
+  // }
 
-  @Mutation(() => Service)
-  updateService(@Args('updateServiceInput') updateServiceInput: UpdateServiceInput) {
-    return this.serviceService.update(updateServiceInput.id, updateServiceInput);
-  }
+  // @Mutation(() => Service)
+  // updateService(@Args('updateServiceInput') updateServiceInput: UpdateServiceInput) {
+  //   return this.serviceService.update(updateServiceInput.id, updateServiceInput);
+  // }
 
-  @Mutation(() => Service)
-  removeService(@Args('id', { type: () => Int }) id: number) {
-    return this.serviceService.remove(id);
-  }
+  // @Mutation(() => Service)
+  // removeService(@Args('id', { type: () => Int }) id: number) {
+  //   return this.serviceService.remove(id);
+  // }
 }
