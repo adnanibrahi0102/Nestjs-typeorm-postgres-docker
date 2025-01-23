@@ -1,4 +1,4 @@
-import { ObjectType, Field, Int } from '@nestjs/graphql';
+import { ObjectType, Field} from '@nestjs/graphql';
 
 @ObjectType()
 export class ServiceEntity {
@@ -17,7 +17,6 @@ export class ServiceEntity {
 
 @ObjectType()
 export class ServiceResponse {
-  
   @Field()
   status: number;
 
@@ -29,6 +28,18 @@ export class ServiceResponse {
 
   @Field(() => [ServiceEntity])
   data: ServiceEntity[];
+}
+
+@ObjectType()
+export class ServiceResponseForDelete {
+  @Field()
+  status: number;
+
+  @Field()
+  message: string;
+
+  @Field()
+  success: boolean;
 }
 
 @ObjectType()
@@ -44,4 +55,19 @@ export class ServiceFindOneResponse {
 
   @Field(() => ServiceEntity)
   data: ServiceEntity;
+}
+
+@ObjectType()
+export class ServiceResponseForUpdate {
+  @Field()
+  status: number;
+
+  @Field()
+  message: string;
+
+  @Field()
+  success: boolean;
+
+  @Field(() => ServiceEntity, { nullable: true })
+  data?: ServiceEntity; // Includes updated service details, nullable for flexibility
 }
