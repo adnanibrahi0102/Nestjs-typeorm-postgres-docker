@@ -34,7 +34,7 @@ export class PlanResolver {
   }
 
   @Mutation(() => CreatePlanResponse)
-  removePlan(@Args('id', { type: () => Int }) id: number) {
+  removePlan(@Args('id') id: string) {
     return this.planService.remove(id);
   }
 }
