@@ -3,6 +3,7 @@ import { CreatePlanInput } from './dto/create-plan.input';
 import { UpdatePlanInput } from './dto/update-plan.input';
 import { PrismaService } from 'prisma/prisma.service';
 import { PlanEntity, PlanFindAllResponse } from './entities/plan.entity';
+import { Prisma } from '@prisma/client';
 
 @Injectable()
 export class PlanService {
@@ -35,7 +36,6 @@ export class PlanService {
   async findAllPlans(): Promise<PlanFindAllResponse> {
     try {
       const plans = await this.prismaService.plan.findMany();
-      console.log(plans);
 
       if (!plans || plans.length === 0) {
         throw new HttpException('Plans not found', HttpStatus.NOT_FOUND);
@@ -46,7 +46,6 @@ export class PlanService {
         features: plan.features,
         price: plan.price.toNumber(), // Assuming price is a Decimal
       }));
-      console.log('planEntities:', planEntities);
 
       return {
         status: HttpStatus.OK,
@@ -55,8 +54,6 @@ export class PlanService {
         data: planEntities,
       };
     } catch (error) {
-      console.log(error.message);
-
       throw new HttpException(error.message, HttpStatus.INTERNAL_SERVER_ERROR);
     }
   }
@@ -77,7 +74,6 @@ export class PlanService {
         features: plan.features,
         price: plan.price.toNumber(), // Assuming price is a Decimal
       };
-      console.log('planEntities:', planEntities);
 
       return {
         status: HttpStatus.OK,
@@ -90,9 +86,52 @@ export class PlanService {
     }
   }
 
-  update(id: string, updatePlanInput: UpdatePlanInput) {}
+  async update(id: string, updatePlanInput: UpdatePlanInput) {
+    try {
+      const updateData: any = {};
+      if (updatePlanInput.name) {
+        updateData.name = updatePlanInput.name;
+      }
+      if (updatePlanInput.features) {
+        updateData.features = updatePlanInput.features;
+      }
+      if (updatePlanInput.price) {
+        updateData.price = updatePlanInput.price;
+      }
+      const plan = await this.prismaService.plan.update({
+        where: {
+          id: id,
+        },
+        data: updateData,
+      });
 
-  remove(id: number) {
-    return `This action removes a #${id} plan`;
+      if (!plan) {
+        throw new HttpException('Plan not updated', HttpStatus.NOT_MODIFIED);
+      }
+      return {
+        status: HttpStatus.OK,
+        message: 'Plan updated successfully',
+        success: true,
+      };
+    } catch (error) {
+      throw new HttpException(error.message, HttpStatus.INTERNAL_SERVER_ERROR);
+    }
+  }
+
+  async remove(id: string) {
+    try {
+      await this.prismaService.plan.delete({
+        where: {
+          id: id,
+        },
+      });
+      return {
+        status: HttpStatus.OK,
+        message: 'Plan deleted successfully',
+        success: true,
+      };
+    } catch (error) {
+      throw new HttpException(error.message, HttpStatus.INTERNAL_SERVER_ERROR);
+    }
   }
 }
