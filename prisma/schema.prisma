@@ -31,6 +31,9 @@ model User {
   updatedAt   DateTime @updatedAt // Timestamp when the user is last updated
   plan        Plan?    @relation(fields: [planId], references: [id]) // Relation to the Plan model
   planId      String? // Foreign key to reference the Plan model
+  // One-to-Many Relationship: One User can have multiple Properties
+  properties  HotelProperty[]  // A user can own multiple properties
+  
 }
 
 // Plan model representing subscription plans
@@ -61,4 +64,66 @@ model PlanService {
   service   Service  @relation(fields: [serviceId], references: [id], name: "ServiceToPlanService") // Relation to Service
   serviceId String // Foreign key to reference the Service model
   createdAt DateTime @default(now()) // Timestamp when the relationship is created
+}
+
+model HotelProperty {
+  id                String    @id @unique @default(uuid())
+  hotelName         String
+  hotelAddress      String
+  city              String
+  state             String
+  zipCode           String
+  country           String    @default("India")  // Default for Kashmir-focused platform
+  phoneNumber       String
+  email             String    @unique
+  websiteURL        String?  
+  logo              String?   // URL to image storage (S3/Cloudinary)
+  description       String
+  hotelImages       String[]  // Array of image URLs
+  uniqueIdentificationPhotoCopy String  
+  userId            String
+  user              User      @relation(fields: [userId], references: [id])
+  propertyRooms        Room[]   
+  checkInTime       String    @default("14:00")
+  checkOutTime      String    @default("12:00")
+  latitude          Float?  
+  longitude         Float?
+  socialMedia       Json?   
+  avgRating         Float?    @default(0.0)    
+  reviews           Review[] 
+  createdAt         DateTime  @default(now())
+  updatedAt         DateTime  @updatedAt
+
+  // Indexes for common search filters 
+  @@index([city])
+  @@index([state])
+  @@index([country])
+  @@index([avgRating])
+}
+
+
+// New supporting models
+model Room {
+  id              String   @id @unique @default(uuid())
+  type            String   // "Deluxe Room", "Family Suite"
+  description     String
+  pricePerNight   Decimal
+  capacity        Int      @default(2)
+  amenities       String[] // ["TV", "AC", "Minibar"]
+  images          String[] 
+  cancellationPolicy String?  // Free text or predefined options
+  hotelProperty   HotelProperty @relation(fields: [hotelId], references: [id])
+  hotelId         String
+  createdAt       DateTime @default(now())
+}
+
+model Review {
+  id              String   @id @unique @default(uuid())
+  rating          Int     @default(0)
+  comment         String?
+  guestName       String
+  guestEmail      String
+  hotelProperty   HotelProperty @relation(fields: [hotelId], references: [id])
+  hotelId         String
+  createdAt       DateTime @default(now())
 }
