@@ -14,6 +14,7 @@ import { RolesGuard } from './auth/guards/jwt-auth.guard';
 import { MailerModule } from '@nestjs-modules/mailer';
 import { PlanModule } from './plan/plan.module';
 import { ServiceModule } from './service/service.module';
+import { HotelPropertyModule } from './hotel-property/hotel-property.module';
 
 // Register the Enum here
 registerEnumType(userRole, {
@@ -45,6 +46,7 @@ registerEnumType(userRole, {
     }),
     PlanModule,
     ServiceModule,
+    HotelPropertyModule,
   ],
   controllers: [AppController],
   providers: [
